@@ -1,57 +1,57 @@
- User  | CREATE TABLE `User` (
-  `Id` int(11) NOT NULL AUTO_INCREMENT,
-  `Email` varchar(40) NOT NULL,
-  `Role` varchar(20) DEFAULT NULL,
-  `Is_active` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`Id`)
-)
-
-
-Students | CREATE TABLE `Students` (
-  `Pid` varchar(20) NOT NULL,
-  `Email` varchar(40) NOT NULL,
-  `Dept_Code` varchar(20) NOT NULL,
-  `Course_Name` varchar(40) NOT NULL,
-  `CGPA` float(4,2) DEFAULT NULL,
-  `Semester` int(3) DEFAULT NULL,
-  `Description` varchar(150) DEFAULT NULL,
-  `Date_of_birth` date DEFAULT NULL,
-  PRIMARY KEY (`Pid`)
-)
-
-
-Company | CREATE TABLE `Company` (
-  `Id` int(11) NOT NULL AUTO_INCREMENT,
-  `Name` varchar(20) NOT NULL,
-  `Location` varchar(30) NOT NULL,
-  `website` varchar(50) NOT NULL,
-  `Email` varchar(40) NOT NULL,
-  PRIMARY KEY (`Id`)
-)
-
-
-
-Job_Posting | CREATE TABLE `Job_Posting` (
-  `Id` int(11) NOT NULL AUTO_INCREMENT,
-  `Company_id` int(11) DEFAULT NULL,
-  `Eligibility` varchar(150) NOT NULL,
-  `Application_Open_Date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `Application_Close_Date` datetime NOT NULL,
-  `Location` varchar(40) NOT NULL,
-  `Job_Description` varchar(250) NOT NULL,
+-- User Table
+CREATE TABLE `User` (
+  `Id` INT(11) NOT NULL AUTO_INCREMENT,
+  `Email` VARCHAR(40) NOT NULL,
+  `Role` VARCHAR(20) DEFAULT NULL,
+  `Is_active` TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`Id`),
-  KEY `Company_id` (`Company_id`),
-  CONSTRAINT `Job_Posting_ibfk_1` FOREIGN KEY (`Company_id`) REFERENCES `Company` (`Id`)
-)
+  UNIQUE KEY `Email_UNIQUE` (`Email`)
+);
 
+-- Students Table
+CREATE TABLE `Students` (
+  `Pid` VARCHAR(20) NOT NULL,
+  `Email` VARCHAR(40) NOT NULL,
+  `Dept_Code` VARCHAR(20) NOT NULL,
+  `Course_Name` VARCHAR(40) NOT NULL,
+  `CGPA` FLOAT(4,2) DEFAULT NULL,
+  `Semester` INT(3) DEFAULT NULL,
+  `Description` VARCHAR(150) DEFAULT NULL,
+  `Date_of_birth` DATE DEFAULT NULL,
+  PRIMARY KEY (`Pid`),
+  FOREIGN KEY (`Email`) REFERENCES `User` (`Email`) ON DELETE CASCADE
+);
 
+-- Company Table
+CREATE TABLE `Company` (
+  `Id` INT(11) NOT NULL AUTO_INCREMENT,
+  `Name` VARCHAR(20) NOT NULL,
+  `Location` VARCHAR(30) NOT NULL,
+  `Website` VARCHAR(50) NOT NULL,
+  `Email` VARCHAR(40) NOT NULL,
+  PRIMARY KEY (`Id`)
+);
 
-Job_Applications | CREATE TABLE `Job_Applications` (
-  `Company_id` int(11) DEFAULT NULL,
-  `student_id` varchar(20) DEFAULT NULL,
-  `Application_Date` datetime NOT NULL,
-  KEY `Company_id` (`Company_id`),
-  KEY `student_id` (`student_id`),
-  CONSTRAINT `Job_Applications_ibfk_1` FOREIGN KEY (`Company_id`) REFERENCES `Company` (`Id`),
-  CONSTRAINT `Job_Applications_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `Students` (`Pid`)
-)
+-- Job_Posting Table
+CREATE TABLE `Job_Posting` (
+  `Id` INT(11) NOT NULL AUTO_INCREMENT,
+  `Company_id` INT(11) NOT NULL,
+  `Eligibility` VARCHAR(150) NOT NULL,
+  `Application_Open_Date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `Application_Close_Date` DATETIME NOT NULL,
+  `Location` VARCHAR(40) NOT NULL,
+  `Job_Description` VARCHAR(250) NOT NULL,
+  PRIMARY KEY (`Id`),
+  FOREIGN KEY (`Company_id`) REFERENCES `Company` (`Id`) ON DELETE CASCADE
+);
+
+-- Job_Applications Table
+CREATE TABLE `Job_Applications` (
+  `Id` INT(11) NOT NULL AUTO_INCREMENT,
+  `Company_id` INT(11) NOT NULL,
+  `student_id` VARCHAR(20) NOT NULL,
+  `Application_Date` DATETIME NOT NULL,
+  PRIMARY KEY (`Id`),
+  FOREIGN KEY (`Company_id`) REFERENCES `Company` (`Id`) ON DELETE CASCADE,
+  FOREIGN KEY (`student_id`) REFERENCES `Students` (`Pid`) ON DELETE CASCADE
+);
